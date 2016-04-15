@@ -584,3 +584,4 @@ F1_SVM_NB_spect <- t.test(spect.SVM.set$F1,spect.NB.set$F1)
 F1_NB_BAG_spect <- t.test(spect.NB.set$F1,spect.BAG.set$F1)
 F1_BAG_BOOST_spect <- t.test(spect.BAG.set$F1,spect.BOOST.set$F1)
 ```
+#### IT is left to see how to give points if we have t-test results to see who is the winner classifier
