@@ -462,3 +462,125 @@ sonar.NB.set
 sonar.BAG.set
 sonar.BOOST.set
 ```
+# Comparisons
+### As I see it we have to compare every two classifiers for a certain metric on the same dataset
+
+## Sonar
+
+### Accuracy Metric
+```{r}
+accuracy_c4_RF_sonar <- t.test(sonar.c4.set$Accuracy,sonar.RF.set$Accuracy)
+accuracy_RF_SVM_sonar <- t.test(sonar.RF.set$Accuracy,sonar.SVM.set$Accuracy)
+accuracy_SVM_NB_sonar <- t.test(sonar.SVM.set$Accuracy,sonar.NB.set$Accuracy)
+accuracy_NB_BAG_sonar <- t.test(sonar.NB.set$Accuracy,sonar.BAG.set$Accuracy)
+accuracy_BAG_BOOST_sonar <- t.test(sonar.BAG.set$Accuracy,sonar.BOOST.set$Accuracy)
+```
+### Precision
+```{r}
+precision_c4_RF_sonar <- t.test(sonar.c4.set$Precision,sonar.RF.set$Precision)
+precision_RF_SVM_sonar <- t.test(sonar.RF.set$Precision,sonar.SVM.set$Precision)
+precision_SVM_NB_sonar <- t.test(sonar.SVM.set$Precision,sonar.NB.set$Precision)
+precision_NB_BAG_sonar <- t.test(sonar.NB.set$Precision,sonar.BAG.set$Precision)
+precision_BAG_BOOST_sonar <- t.test(sonar.BAG.set$Precision,sonar.BOOST.set$Precision)
+```
+
+### Recall
+```{r}
+recall_c4_RF_sonar <- t.test(sonar.c4.set$Recall,sonar.RF.set$Recall)
+recall_RF_SVM_sonar <- t.test(sonar.RF.set$Recall,sonar.SVM.set$Recall)
+recall_SVM_NB_sonar <- t.test(sonar.SVM.set$Recall,sonar.NB.set$Recall)
+recall_NB_BAG_sonar <- t.test(sonar.NB.set$Recall,sonar.BAG.set$Recall)
+recall_BAG_BOOST_sonar <- t.test(sonar.BAG.set$Recall,sonar.BOOST.set$Recall)
+```
+
+### F-Score
+```{r}
+F1_c4_RF_sonar <- t.test(sonar.c4.set$F1,sonar.RF.set$F1)
+F1_RF_SVM_sonar <- t.test(sonar.RF.set$F1,sonar.SVM.set$F1)
+F1_SVM_NB_sonar <- t.test(sonar.SVM.set$F1,sonar.NB.set$F1)
+F1_NB_BAG_sonar <- t.test(sonar.NB.set$F1,sonar.BAG.set$F1)
+F1_BAG_BOOST_sonar <- t.test(sonar.BAG.set$F1,sonar.BOOST.set$F1)
+```
+
+## hepatitis
+
+```{r}
+accuracy_c4_RF_hepatitis <- t.test(hepatitis.c4.set$Accuracy,hepatitis.RF.set$Accuracy)
+accuracy_RF_SVM_hepatitis <- t.test(hepatitis.RF.set$Accuracy,hepatitis.SVM.set$Accuracy)
+accuracy_SVM_NB_hepatitis <- t.test(hepatitis.SVM.set$Accuracy,hepatitis.NB.set$Accuracy)
+accuracy_NB_BAG_hepatitis <- t.test(hepatitis.NB.set$Accuracy,hepatitis.BAG.set$Accuracy)
+accuracy_BAG_BOOST_hepatitis <- t.test(hepatitis.BAG.set$Accuracy,hepatitis.BOOST.set$Accuracy)
+
+precision_c4_RF_hepatitis <- t.test(hepatitis.c4.set$Precision,hepatitis.RF.set$Precision)
+precision_RF_SVM_hepatitis <- t.test(hepatitis.RF.set$Precision,hepatitis.SVM.set$Precision)
+precision_SVM_NB_hepatitis <- t.test(hepatitis.SVM.set$Precision,hepatitis.NB.set$Precision)
+precision_NB_BAG_hepatitis <- t.test(hepatitis.NB.set$Precision,hepatitis.BAG.set$Precision)
+precision_BAG_BOOST_hepatitis <- t.test(hepatitis.BAG.set$Precision,hepatitis.BOOST.set$Precision)
+
+recall_c4_RF_hepatitis <- t.test(hepatitis.c4.set$Recall,hepatitis.RF.set$Recall)
+recall_RF_SVM_hepatitis <- t.test(hepatitis.RF.set$Recall,hepatitis.SVM.set$Recall)
+recall_SVM_NB_hepatitis <- t.test(hepatitis.SVM.set$Recall,hepatitis.NB.set$Recall)
+recall_NB_BAG_hepatitis <- t.test(hepatitis.NB.set$Recall,hepatitis.BAG.set$Recall)
+recall_BAG_BOOST_hepatitis <- t.test(hepatitis.BAG.set$Recall,hepatitis.BOOST.set$Recall)
+
+F1_c4_RF_hepatitis <- t.test(hepatitis.c4.set$F1,hepatitis.RF.set$F1)
+F1_RF_SVM_hepatitis <- t.test(hepatitis.RF.set$F1,hepatitis.SVM.set$F1)
+F1_SVM_NB_hepatitis <- t.test(hepatitis.SVM.set$F1,hepatitis.NB.set$F1)
+F1_NB_BAG_hepatitis <- t.test(hepatitis.NB.set$F1,hepatitis.BAG.set$F1)
+F1_BAG_BOOST_hepatitis <- t.test(hepatitis.BAG.set$F1,hepatitis.BOOST.set$F1)
+```
+
+## pima
+
+```{r}
+accuracy_c4_RF_pima <- t.test(pima.c4.set$Accuracy,pima.RF.set$Accuracy)
+accuracy_RF_SVM_pima <- t.test(pima.RF.set$Accuracy,pima.SVM.set$Accuracy)
+accuracy_SVM_NB_pima <- t.test(pima.SVM.set$Accuracy,pima.NB.set$Accuracy)
+accuracy_NB_BAG_pima <- t.test(pima.NB.set$Accuracy,pima.BAG.set$Accuracy)
+accuracy_BAG_BOOST_pima <- t.test(pima.BAG.set$Accuracy,pima.BOOST.set$Accuracy)
+
+precision_c4_RF_pima <- t.test(pima.c4.set$Precision,pima.RF.set$Precision)
+precision_RF_SVM_pima <- t.test(pima.RF.set$Precision,pima.SVM.set$Precision)
+precision_SVM_NB_pima <- t.test(pima.SVM.set$Precision,pima.NB.set$Precision)
+precision_NB_BAG_pima <- t.test(pima.NB.set$Precision,pima.BAG.set$Precision)
+precision_BAG_BOOST_pima <- t.test(pima.BAG.set$Precision,pima.BOOST.set$Precision)
+
+recall_c4_RF_pima <- t.test(pima.c4.set$Recall,pima.RF.set$Recall)
+recall_RF_SVM_pima <- t.test(pima.RF.set$Recall,pima.SVM.set$Recall)
+recall_SVM_NB_pima <- t.test(pima.SVM.set$Recall,pima.NB.set$Recall)
+recall_NB_BAG_pima <- t.test(pima.NB.set$Recall,pima.BAG.set$Recall)
+recall_BAG_BOOST_pima <- t.test(pima.BAG.set$Recall,pima.BOOST.set$Recall)
+
+F1_c4_RF_pima <- t.test(pima.c4.set$F1,pima.RF.set$F1)
+F1_RF_SVM_pima<- t.test(pima.RF.set$F1,pima.SVM.set$F1)
+F1_SVM_NB_pima <- t.test(pima.SVM.set$F1,pima.NB.set$F1)
+F1_NB_BAG_pima <- t.test(pima.NB.set$F1,pima.BAG.set$F1)
+F1_BAG_BOOST_pima<- t.test(pima.BAG.set$F1,pima.BOOST.set$F1)
+```
+
+##spect
+```{r}
+accuracy_c4_RF_spect<- t.test(spect.c4.set$Accuracy,spect.RF.set$Accuracy)
+accuracy_RF_SVM_spect <- t.test(spect.RF.set$Accuracy,spect.SVM.set$Accuracy)
+accuracy_SVM_NB_spect<- t.test(spect.SVM.set$Accuracy,spect.NB.set$Accuracy)
+accuracy_NB_BAG_spect <- t.test(spect.NB.set$Accuracy,spect.BAG.set$Accuracy)
+accuracy_BAG_BOOST_spect <- t.test(spect.BAG.set$Accuracy,spect.BOOST.set$Accuracy)
+
+precision_c4_RF_spect <- t.test(spect.c4.set$Precision,spect.RF.set$Precision)
+precision_RF_SVM_spect <- t.test(spect.RF.set$Precision,spect.SVM.set$Precision)
+precision_SVM_NB_spect <- t.test(spect.SVM.set$Precision,spect.NB.set$Precision)
+precision_NB_BAG_spect <- t.test(spect.NB.set$Precision,spect.BAG.set$Precision)
+precision_BAG_BOOST_spect <- t.test(spect.BAG.set$Precision,spect.BOOST.set$Precision)
+
+recall_c4_RF_spect <- t.test(spect.c4.set$Recall,spect.RF.set$Recall)
+recall_RF_SVM_spect<- t.test(spect.RF.set$Recall,spect.SVM.set$Recall)
+recall_SVM_NB_spect <- t.test(spect.SVM.set$Recall,spect.NB.set$Recall)
+recall_NB_BAG_spect <- t.test(spect.NB.set$Recall,spect.BAG.set$Recall)
+recall_BAG_BOOST_spect <- t.test(spect.BAG.set$Recall,spect.BOOST.set$Recall)
+
+F1_c4_RF_spect <- t.test(spect.c4.set$F1,spect.RF.set$F1)
+F1_RF_SVM_spect <- t.test(spect.RF.set$F1,spect.SVM.set$F1)
+F1_SVM_NB_spect <- t.test(spect.SVM.set$F1,spect.NB.set$F1)
+F1_NB_BAG_spect <- t.test(spect.NB.set$F1,spect.BAG.set$F1)
+F1_BAG_BOOST_spect <- t.test(spect.BAG.set$F1,spect.BOOST.set$F1)
+```
