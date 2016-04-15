@@ -105,3 +105,360 @@ kfolds.adBoost <- kfolds(sonar.adBoost)
 metrics.adBoost <- getMetrics(kfolds.adBoost)
 print(metrics.adBoost)
 ```
+
+# Getting the other datasets
+
+### spect, pima and hepatitis
+```{r}
+hepatitis.raw <- read.csv("hepatitis/hepatitis.data", header = FALSE) %>% mutate(V1 = as.factor(V1))
+spect.raw <-  rbind(read.csv("spect/SPECT.train", header = FALSE), read.csv("spect/SPECT.test", header = FALSE)) %>% mutate(V1 = as.factor(V1))
+pima.raw <- read.csv("pima/pima-indians-diabetes.data", header = FALSE) %>% rename(V1 = V9, V9 = V1) %>% mutate(V1 = as.factor(V1))
+```
+
+### hepatitis and c4.5 test 10 times matrix
+```{r}
+hepatitis.c4.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(hepatitis.c4.set) <- c("Accuracy","Precision","Recall","F1")
+for(i in 1:10){
+  temp.c45  <- J48(V1 ~ ., hepatitis.raw)
+  kfolds.c45 <- kfolds(temp.c45)
+  metrics.c45 <- getMetrics(kfolds.c45)
+  hepatitis.c4.set[i,]$Accuracy <- metrics.c45$Accuracy
+  hepatitis.c4.set[i,]$Precision <- metrics.c45$Precision
+  hepatitis.c4.set[i,]$Recall <- metrics.c45$Recall
+  hepatitis.c4.set[i,]$F1 <- metrics.c45$F1
+}
+hepatitis.c4.set
+```
+
+### hepatitis and random forest 10 times matrix
+```{r}
+hepatitis.RF.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(hepatitis.RF.set) <- c("Accuracy","Precision","Recall","F1")
+for(i in 1:10){
+  temp.RF  <- random.forest(V1 ~ ., hepatitis.raw)
+  kfolds.RF <- kfolds(temp.RF)
+  metrics.RF <- getMetrics(kfolds.RF)
+  hepatitis.RF.set[i,]$Accuracy <- metrics.RF$Accuracy
+  hepatitis.RF.set[i,]$Precision <- metrics.RF$Precision
+  hepatitis.RF.set[i,]$Recall <- metrics.RF$Recall
+  hepatitis.RF.set[i,]$F1 <- metrics.RF$F1
+}
+hepatitis.RF.set
+```
+
+### hepatitis and SVM classifier 10 times
+```{r}
+hepatitis.SVM.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(hepatitis.SVM.set) <- c("Accuracy","Precision","Recall","F1")
+for(i in 1:10){
+  temp  <- SMO(V1 ~ ., hepatitis.raw)
+  kfolds.t <- kfolds(temp)
+  metrics <- getMetrics(kfolds.t)
+  hepatitis.SVM.set[i,]$Accuracy <- metrics$Accuracy
+  hepatitis.SVM.set[i,]$Precision <- metrics$Precision
+  hepatitis.SVM.set[i,]$Recall <- metrics$Recall
+  hepatitis.SVM.set[i,]$F1 <- metrics$F1
+}
+hepatitis.SVM.set
+```
+#### hepatitis and naive bayes 10 times
+```{r}
+hepatitis.NB.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(hepatitis.NB.set) <- c("Accuracy","Precision","Recall","F1")
+for(i in 1:10){
+  temp  <- naive.bayes(V1 ~ ., hepatitis.raw)
+  kfolds.t <- kfolds(temp)
+  metrics <- getMetrics(kfolds.t)
+  hepatitis.NB.set[i,]$Accuracy <- metrics$Accuracy
+  hepatitis.NB.set[i,]$Precision <- metrics$Precision
+  hepatitis.NB.set[i,]$Recall <- metrics$Recall
+  hepatitis.NB.set[i,]$F1 <- metrics$F1
+}
+hepatitis.NB.set
+```
+
+### hepatitis and bagging 10 times
+```{r}
+hBag <- Bagging(formula(V1 ~ .,hepatitis.raw), hepatitis.raw, control = Weka_control(W = "weka.classifiers.trees.J48"), options = list(model=TRUE))
+hepatitis.BAG.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(hepatitis.BAG.set) <- c("Accuracy","Precision","Recall","F1")
+for(i in 1:10){
+  kfolds.t <- kfolds(hBag)
+  metrics <- getMetrics(kfolds.t)
+  hepatitis.BAG.set[i,]$Accuracy <- metrics$Accuracy
+  hepatitis.BAG.set[i,]$Precision <- metrics$Precision
+  hepatitis.BAG.set[i,]$Recall <- metrics$Recall
+  hepatitis.BAG.set[i,]$F1 <- metrics$F1
+}
+hepatitis.BAG.set
+```
+
+### hepatitis and boosting 10 times
+```{r}
+hepatitis.BOOST.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(hepatitis.BOOST.set) <- c("Accuracy","Precision","Recall","F1")
+for(i in 1:10){
+  h.adBoost <- AdaBoostM1(V1 ~.,hepatitis.raw)
+  kfolds.t <- kfolds(h.adBoost)
+  metrics <- getMetrics(kfolds.t)
+  hepatitis.BOOST.set[i,]$Accuracy <- metrics$Accuracy
+  hepatitis.BOOST.set[i,]$Precision <- metrics$Precision
+  hepatitis.BOOST.set[i,]$Recall <- metrics$Recall
+  hepatitis.BOOST.set[i,]$F1 <- metrics$F1
+}
+hepatitis.BOOST.set
+```
+
+### hepatitis and MultilayerPerceptron 10 times
+It will take a while longer than the other classifiers and it caused my R console to not respond! thats why I commented it.
+```{r}
+#NN <- make_Weka_classifier("weka/classifiers/functions/MultilayerPerceptron")
+#hepatitis.nn <- NN(V1 ~ ., hepatitis.raw)
+#hepatitis.NN.set <- data.frame(matrix(ncol = 4, nrow = 10))
+#names(hepatitis.NN.set) <- c("Accuracy","Precision","Recall","F1")
+#for(i in 1:10){
+#  kfolds.t <- kfolds(hepatitis.nn)
+#  metrics <- getMetrics(kfolds.t)
+#  hepatitis.NN.set[i,]$Accuracy <- metrics$Accuracy
+#  hepatitis.NN.set[i,]$Precision <- metrics$Precision
+#  hepatitis.NN.set[i,]$Recall <- metrics$Recall
+#  hepatitis.NN.set[i,]$F1 <- metrics$F1
+#}
+#hepatitis.NN.set
+```
+
+### instead of doing each loop separately we can do all of them at one loop for spect dataset
+
+```{r}
+spect.c4.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(spect.c4.set) <- c("Accuracy","Precision","Recall","F1")
+
+spect.RF.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(spect.RF.set) <- c("Accuracy","Precision","Recall","F1")
+
+spect.SVM.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(spect.SVM.set) <- c("Accuracy","Precision","Recall","F1")
+
+spect.NB.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(spect.NB.set) <- c("Accuracy","Precision","Recall","F1")
+
+spect.BAG.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(spect.BAG.set) <- c("Accuracy","Precision","Recall","F1")
+
+spectBag <- Bagging(formula(V1 ~ .,spect.raw), spect.raw, control = Weka_control(W = "weka.classifiers.trees.J48"), options = list(model=TRUE))
+
+spect.BOOST.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(spect.BOOST.set) <- c("Accuracy","Precision","Recall","F1")
+
+for(i in 1:10){
+  temp.c45  <- J48(V1 ~ ., spect.raw)
+  kfolds.c45 <- kfolds(temp.c45)
+  metrics.c45 <- getMetrics(kfolds.c45)
+  spect.c4.set[i,]$Accuracy <- metrics.c45$Accuracy
+  spect.c4.set[i,]$Precision <- metrics.c45$Precision
+  spect.c4.set[i,]$Recall <- metrics.c45$Recall
+  spect.c4.set[i,]$F1 <- metrics.c45$F1
+
+  temp.RF  <- random.forest(V1 ~ ., spect.raw)
+  kfolds.RF <- kfolds(temp.RF)
+  metrics.RF <- getMetrics(kfolds.RF)
+  spect.RF.set[i,]$Accuracy <- metrics.RF$Accuracy
+  spect.RF.set[i,]$Precision <- metrics.RF$Precision
+  spect.RF.set[i,]$Recall <- metrics.RF$Recall
+  spect.RF.set[i,]$F1 <- metrics.RF$F1
+
+  temp.sv  <- SMO(V1 ~ ., spect.raw)
+  kfolds.t <- kfolds(temp.sv)
+  metrics <- getMetrics(kfolds.t)
+  spect.SVM.set[i,]$Accuracy <- metrics$Accuracy
+  spect.SVM.set[i,]$Precision <- metrics$Precision
+  spect.SVM.set[i,]$Recall <- metrics$Recall
+  spect.SVM.set[i,]$F1 <- metrics$F1
+
+  temp.nb  <- naive.bayes(V1 ~ ., spect.raw)
+  kfolds.t <- kfolds(temp.nb)
+  metrics <- getMetrics(kfolds.t)
+  spect.NB.set[i,]$Accuracy <- metrics$Accuracy
+  spect.NB.set[i,]$Precision <- metrics$Precision
+  spect.NB.set[i,]$Recall <- metrics$Recall
+  spect.NB.set[i,]$F1 <- metrics$F1
+
+  kfolds.t <- kfolds(spectBag)
+  metrics <- getMetrics(kfolds.t)
+  spect.BAG.set[i,]$Accuracy <- metrics$Accuracy
+  spect.BAG.set[i,]$Precision <- metrics$Precision
+  spect.BAG.set[i,]$Recall <- metrics$Recall
+  spect.BAG.set[i,]$F1 <- metrics$F1
+
+  spect.adBoost <- AdaBoostM1(V1 ~.,spect.raw)
+  kfolds.t <- kfolds(spect.adBoost)
+  metrics <- getMetrics(kfolds.t)
+  spect.BOOST.set[i,]$Accuracy <- metrics$Accuracy
+  spect.BOOST.set[i,]$Precision <- metrics$Precision
+  spect.BOOST.set[i,]$Recall <- metrics$Recall
+  spect.BOOST.set[i,]$F1 <- metrics$F1
+}
+spect.c4.set
+spect.RF.set
+spect.SVM.set
+spect.NB.set
+spect.BAG.set
+spect.BOOST.set
+```
+### we can do the same thing for the pima data set
+
+```{r}
+pima.c4.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(pima.c4.set) <- c("Accuracy","Precision","Recall","F1")
+
+pima.RF.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(pima.RF.set) <- c("Accuracy","Precision","Recall","F1")
+
+pima.SVM.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(pima.SVM.set) <- c("Accuracy","Precision","Recall","F1")
+
+pima.NB.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(pima.NB.set) <- c("Accuracy","Precision","Recall","F1")
+
+pima.BAG.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(pima.BAG.set) <- c("Accuracy","Precision","Recall","F1")
+
+pimaBag <- Bagging(formula(V1 ~ .,pima.raw), pima.raw, control = Weka_control(W = "weka.classifiers.trees.J48"), options = list(model=TRUE))
+
+pima.BOOST.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(pima.BOOST.set) <- c("Accuracy","Precision","Recall","F1")
+
+for(i in 1:10){
+  temp.c45  <- J48(V1 ~ ., pima.raw)
+  kfolds.c45 <- kfolds(temp.c45)
+  metrics.c45 <- getMetrics(kfolds.c45)
+  pima.c4.set[i,]$Accuracy <- metrics.c45$Accuracy
+  pima.c4.set[i,]$Precision <- metrics.c45$Precision
+  pima.c4.set[i,]$Recall <- metrics.c45$Recall
+  pima.c4.set[i,]$F1 <- metrics.c45$F1
+
+  temp.RF  <- random.forest(V1 ~ ., pima.raw)
+  kfolds.RF <- kfolds(temp.RF)
+  metrics.RF <- getMetrics(kfolds.RF)
+  pima.RF.set[i,]$Accuracy <- metrics.RF$Accuracy
+  pima.RF.set[i,]$Precision <- metrics.RF$Precision
+  pima.RF.set[i,]$Recall <- metrics.RF$Recall
+  pima.RF.set[i,]$F1 <- metrics.RF$F1
+
+  temp.sv  <- SMO(V1 ~ ., pima.raw)
+  kfolds.t <- kfolds(temp.sv)
+  metrics <- getMetrics(kfolds.t)
+  pima.SVM.set[i,]$Accuracy <- metrics$Accuracy
+  pima.SVM.set[i,]$Precision <- metrics$Precision
+  pima.SVM.set[i,]$Recall <- metrics$Recall
+  pima.SVM.set[i,]$F1 <- metrics$F1
+
+  temp.nb  <- naive.bayes(V1 ~ ., pima.raw)
+  kfolds.t <- kfolds(temp.nb)
+  metrics <- getMetrics(kfolds.t)
+  pima.NB.set[i,]$Accuracy <- metrics$Accuracy
+  pima.NB.set[i,]$Precision <- metrics$Precision
+  pima.NB.set[i,]$Recall <- metrics$Recall
+  pima.NB.set[i,]$F1 <- metrics$F1
+
+  kfolds.t <- kfolds(pimaBag)
+  metrics <- getMetrics(kfolds.t)
+  pima.BAG.set[i,]$Accuracy <- metrics$Accuracy
+  pima.BAG.set[i,]$Precision <- metrics$Precision
+  pima.BAG.set[i,]$Recall <- metrics$Recall
+  pima.BAG.set[i,]$F1 <- metrics$F1
+
+  pima.adBoost <- AdaBoostM1(V1 ~.,pima.raw)
+  kfolds.t <- kfolds(pima.adBoost)
+  metrics <- getMetrics(kfolds.t)
+  pima.BOOST.set[i,]$Accuracy <- metrics$Accuracy
+  pima.BOOST.set[i,]$Precision <- metrics$Precision
+  pima.BOOST.set[i,]$Recall <- metrics$Recall
+  pima.BOOST.set[i,]$F1 <- metrics$F1
+}
+pima.c4.set
+pima.RF.set
+pima.SVM.set
+pima.NB.set
+pima.BAG.set
+pima.BOOST.set
+```
+
+### and at last lets do it for the very first data set sonar
+```{r}
+sonar.c4.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(sonar.c4.set) <- c("Accuracy","Precision","Recall","F1")
+
+sonar.RF.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(sonar.RF.set) <- c("Accuracy","Precision","Recall","F1")
+
+sonar.SVM.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(sonar.SVM.set) <- c("Accuracy","Precision","Recall","F1")
+
+sonar.NB.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(sonar.NB.set) <- c("Accuracy","Precision","Recall","F1")
+
+sonar.BAG.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(sonar.BAG.set) <- c("Accuracy","Precision","Recall","F1")
+
+sonarBag <- Bagging(formula(V61 ~ .,sonar.raw), sonar.raw, control = Weka_control(W = "weka.classifiers.trees.J48"), options = list(model=TRUE))
+
+sonar.BOOST.set <- data.frame(matrix(ncol = 4, nrow = 10))
+names(sonar.BOOST.set) <- c("Accuracy","Precision","Recall","F1")
+
+for(i in 1:10){
+  temp.c45  <- J48(V61 ~ ., sonar.raw)
+  kfolds.c45 <- kfolds(temp.c45)
+  metrics.c45 <- getMetrics(kfolds.c45)
+  sonar.c4.set[i,]$Accuracy <- metrics.c45$Accuracy
+  sonar.c4.set[i,]$Precision <- metrics.c45$Precision
+  sonar.c4.set[i,]$Recall <- metrics.c45$Recall
+  sonar.c4.set[i,]$F1 <- metrics.c45$F1
+
+  temp.RF  <- random.forest(V61 ~ ., sonar.raw)
+  kfolds.RF <- kfolds(temp.RF)
+  metrics.RF <- getMetrics(kfolds.RF)
+  sonar.RF.set[i,]$Accuracy <- metrics.RF$Accuracy
+  sonar.RF.set[i,]$Precision <- metrics.RF$Precision
+  sonar.RF.set[i,]$Recall <- metrics.RF$Recall
+  sonar.RF.set[i,]$F1 <- metrics.RF$F1
+
+  temp.sv  <- SMO(V61 ~ ., sonar.raw)
+  kfolds.t <- kfolds(temp.sv)
+  metrics <- getMetrics(kfolds.t)
+  sonar.SVM.set[i,]$Accuracy <- metrics$Accuracy
+  sonar.SVM.set[i,]$Precision <- metrics$Precision
+  sonar.SVM.set[i,]$Recall <- metrics$Recall
+  sonar.SVM.set[i,]$F1 <- metrics$F1
+
+  temp.nb  <- naive.bayes(V61 ~ ., sonar.raw)
+  kfolds.t <- kfolds(temp.nb)
+  metrics <- getMetrics(kfolds.t)
+  sonar.NB.set[i,]$Accuracy <- metrics$Accuracy
+  sonar.NB.set[i,]$Precision <- metrics$Precision
+  sonar.NB.set[i,]$Recall <- metrics$Recall
+  sonar.NB.set[i,]$F1 <- metrics$F1
+
+  kfolds.t <- kfolds(sonarBag)
+  metrics <- getMetrics(kfolds.t)
+  sonar.BAG.set[i,]$Accuracy <- metrics$Accuracy
+  sonar.BAG.set[i,]$Precision <- metrics$Precision
+  sonar.BAG.set[i,]$Recall <- metrics$Recall
+  sonar.BAG.set[i,]$F1 <- metrics$F1
+
+  sonar.adBoost <- AdaBoostM1(V61 ~.,sonar.raw)
+  kfolds.t <- kfolds(pima.adBoost)
+  metrics <- getMetrics(kfolds.t)
+  sonar.BOOST.set[i,]$Accuracy <- metrics$Accuracy
+  sonar.BOOST.set[i,]$Precision <- metrics$Precision
+  sonar.BOOST.set[i,]$Recall <- metrics$Recall
+  sonar.BOOST.set[i,]$F1 <- metrics$F1
+}
+sonar.c4.set
+sonar.RF.set
+sonar.SVM.set
+sonar.NB.set
+sonar.BAG.set
+sonar.BOOST.set
+```
