@@ -1,0 +1,107 @@
+# Setting Up Environment
+
+### Converting to working directory
+```{r}
+setwd("/Users/mohammadlotfy/Documents/csen1061-assignment-modeling")
+getwd()
+list.files()
+```
+
+### Set up all the needed libraries
+```{r}
+library("dplyr")
+library("knitr")
+library("partykit")
+library("RWeka")
+```
+### First data set SONAR
+
+```{r}
+sonar.raw <- read.csv("sonar/sonar.all-data" , header = FALSE)
+head(sonar.raw)
+glimpse(sonar.raw)
+```
+
+# Applying multiple classifiers on SONAR
+### implementing some methods
+```{r}
+kfolds <- function(classF) {
+   kfold <- evaluate_Weka_classifier(classF, numFolds = 10)
+   return(kfold)
+}
+
+getMetrics <- function(kfolds) {
+  TP <- kfolds$confusionMatrix[1, 1]
+  TN <- kfolds$confusionMatrix[2, 2]
+  FP <- kfolds$confusionMatrix[2, 1]
+  FN <- kfolds$confusionMatrix[1, 2]
+  accuracy  <- (TP + TN) / (TP + TN + FP + FN)
+  precision <- TP / (TP + FP)
+  recall    <- TP / (TP + FN)
+  f1        <- 2 * precision * recall / (precision + recall)
+  res <- list(Accuracy = accuracy, Precision = precision, Recall = recall, F1 = f1)
+  return(res)
+}
+```
+### Now the classifiers
+
+### C4.5 classifier
+```{r}
+sonar.c45  <- J48(V61 ~ ., sonar.raw)
+print(sonar.c45)
+kfolds.c45 <- kfolds(sonar.c45)
+metrics.c45 <- getMetrics(kfolds.c45)
+print(metrics.c45)
+```
+
+### Random Forest classifier
+```{r}
+random.forest <- make_Weka_classifier("weka/classifiers/trees/RandomForest")
+sonar.rf <- random.forest(V1 ~ ., sonar.raw)
+print(sonar.rf)
+kfolds.rf <- kfolds(sonar.rf)
+metrics.rf <- getMetrics(kfolds.rf)
+print(metrics.rf)
+```
+
+### Support Vector Machine classifier
+```{r}
+sonar.svm <- SMO(V61 ~ ., sonar.raw)
+kfolds.svm <- kfolds(sonar.svm)
+metrics.svm <- getMetrics(kfolds.svm)
+print(metrics.svm)
+```
+
+### Naive Bayes classifier
+```{r}
+naive.bayes <- make_Weka_classifier("weka/classifiers/bayes/NaiveBayes")
+sonar.nb <- naive.bayes(V61 ~ .,sonar.raw)
+kfolds.nb <- kfolds(sonar.nb)
+metrics.nb <- getMetrics(kfolds.nb)
+print(metrics.nb)
+```
+
+### Neural Networks
+```{r}
+NN <- make_Weka_classifier("weka/classifiers/functions/MultilayerPerceptron")
+sonar.nn <- NN(V61 ~ ., sonar.raw)
+kfolds.nn <- kfolds(sonar.nn)
+metrics.nn <- getMetrics(kfolds.nn)
+print(metrics.nn)
+```
+
+### Now lets do the Bagging
+```{r}
+sBag <- Bagging(formula(V61 ~ .,sonar.raw), sonar.raw, control = Weka_control(W = "weka.classifiers.trees.J48"), options = list(model=TRUE))
+kfolds.b <- kfolds(sBag)
+metrics.b <- getMetrics(kfolds.b)
+print(metrics.b)
+```
+
+### AdBoost
+```{r}
+sonar.adBoost <- AdaBoostM1(V61 ~.,sonar.raw)
+kfolds.adBoost <- kfolds(sonar.adBoost)
+metrics.adBoost <- getMetrics(kfolds.adBoost)
+print(metrics.adBoost)
+```
